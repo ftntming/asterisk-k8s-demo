@@ -6,10 +6,10 @@ metadata:
 rules:
   - apiGroups: [""] # "" indicates the core API group
     resources: ["pods","endpoints","services","nodes"]
-    verbs: ["get", "watch", "list"]
+    verbs: ["*"]
   - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "watch", "list", "update", "patch"]
+    resources: ["*"]
+    verbs: ["*"]
 
 ---
 
@@ -26,3 +26,31 @@ roleRef:
   kind: Role
   name: voip-manager
   apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: prom-admin
+  namespace: voip
+rules:
+  - apiGroups: [""]
+    resources: ["pods","endpoints","services","nodes"]
+    verbs: ["*"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: prom-rbac
+  namespace: voip
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: voip
+roleRef:
+  kind: ClusterRole
+  name: prom-admin
+  apiGroup: rbac.authorization.k8s.io
+
